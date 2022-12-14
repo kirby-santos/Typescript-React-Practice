@@ -34,9 +34,31 @@ interface Todo {
   text: string;
 }
 
+const Button: React.FunctionComponent<
+  React.DetailedHTMLProps<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  >
+> = ({title, children, style, ...rest}) => (
+  <button {...rest} style={{
+    ...style,
+    backgroundColor: "red",
+    color: "white",
+    fontSize: "xx-large",
+  }}
+  >{title ?? children}</button>
+);
+
 type ActionType = 
   | {type: "ADD", text: string}
   | {type: "REMOVE", id: number}
+
+const Incrementer: React.FunctionComponent<{
+  value: number;
+  setValue: React.Dispatch<React.SetStateAction<number>>
+}> = ({value, setValue}) => (
+  <Button onClick={() => setValue(value + 1)} title={`Add - ${value}`}/>
+);
 
 function App() {
   const onListClick = useCallback((item: string) => {
@@ -72,6 +94,7 @@ function App() {
   }, []);
 
   const newTodoRef = useRef<HTMLInputElement>(null);
+
   const onAddTodo = useCallback(() => {
     if (newTodoRef.current) {
         dispatch({
@@ -81,6 +104,8 @@ function App() {
       newTodoRef.current.value = "";
     }
   }, []);
+
+const [value, setValue] = useState(0);
 
   return (
     <div>
@@ -92,6 +117,7 @@ function App() {
       <Box>
         {JSON.stringify(payload)}
       </Box>
+      <Incrementer value={value} setValue={setValue} />
 
       <Heading title="Todos" />
       {todos.map((todo) => (
